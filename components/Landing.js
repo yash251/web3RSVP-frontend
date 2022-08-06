@@ -12,12 +12,18 @@ export default function Landing({ children }) {
       </Head>
       <section className="py-12">
         <div className="w-full md:w-8/12 text-left">
-          <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-            <span>Discover what&apos;s happening in the </span>
-            <span className="text-indigo-600">metaverse</span>
+          <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-5xl">
+            <span>Event management with ease.<br/> From invite, to RSVP, to </span>
+            <span className="text-indigo-600">showtime</span>
           </h1>
-          <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
+          <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-2xl lg:mx-0">
             Find, join, and create virtual events with your web3 frens!
+          </p>
+          <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-2xl lg:mx-0">
+            Managing every step of your event—from online RSVP to check-in—has never been easier
+          </p>
+          <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-2xl lg:mx-0">
+            Transform your events with a game-changing RSVP system
           </p>
         </div>
       </section>
