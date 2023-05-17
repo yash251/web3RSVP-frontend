@@ -79,11 +79,12 @@ export default function CreateEvent() {
         console.log("Minted -- ", txn.hash);
 
         setEventID(wait.events[0].args[0]);
+
         setSuccess(true);
         setLoading(false);
         setMessage("Your event has been created successfully.");
       } else {
-        console.log("Error getting contract.");
+        console.log("Error getting contract");
       }
     } catch (error) {
       setSuccess(false);

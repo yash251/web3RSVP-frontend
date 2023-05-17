@@ -8,25 +8,25 @@ import { publicProvider } from "wagmi/providers/public";
 import { ApolloProvider } from "@apollo/client";
 import client from "../apollo-client";
 
+const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
+
+const { chains, provider } = configureChains(
+  [chain.polygon],
+  [infuraProvider({ infuraId }), publicProvider()]
+);
+
+const { connectors } = getDefaultWallets({
+  appName: "web3rsvp",
+  chains,
+});
+
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors,
+  provider,
+});
+
 export default function MyApp({ Component, pageProps }) {
-
-  const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
-
-  const { chains, provider } = configureChains(
-    [chain.polygon],
-    [infuraProvider({ infuraId }), publicProvider()]
-  );
-
-  const { connectors } = getDefaultWallets({
-    appName: "web3rsvp",
-    chains,
-  });
-
-  const wagmiClient = createClient({
-    autoConnect: true,
-    connectors,
-    provider,
-  });
 
   return (
     <WagmiConfig client={wagmiClient}>

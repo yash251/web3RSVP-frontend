@@ -2,15 +2,13 @@ import abiJSON from "./Web3RSVP.json";
 import { ethers } from "ethers";
 
 function connectContract() {
-    //Note: Your contractAddress will start with 0x, delete everything between the quotes and paste your contract address.
-    const contractAddress = "0xE755752bB8901e993BA11bEbE704B4d9d98C588b";
+    const contractAddress = "0x5A74f8935FE7204553cAa5918858ed8FF335eD4B";
     const contractABI = abiJSON.abi;
     let rsvpContract;
     try {
       const { ethereum } = window;
   
       if (ethereum) {
-        //checking for eth object in the window
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         rsvpContract = new ethers.Contract(contractAddress, contractABI, signer); // instantiating new connection to the contract

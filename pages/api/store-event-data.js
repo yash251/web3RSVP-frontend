@@ -24,6 +24,7 @@ async function storeEventData(req, res) {
     }
 }
 
+//purpose of this function is to create a json file that includes metadata passed from the req.body object
 async function makeFileObjects(body) {
     const buffer = Buffer.from(JSON.stringify(body));
   
@@ -38,6 +39,7 @@ function makeStorageClient() {
     return new Web3Storage({ token: process.env.WEB3STORAGE_TOKEN });
 }
 
+// function which will store that json file to Web3.storage.
 async function storeFiles(files) {
     const client = makeStorageClient();
     const cid = await client.put(files);
