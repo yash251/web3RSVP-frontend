@@ -1,6 +1,3 @@
-import Image from "next/image";
-import Link from "next/link";
-
 export default function Footer() {
   return (
     <footer className="bg-white border-t-2 border-gray-100">
@@ -39,7 +36,7 @@ export default function Footer() {
         </div>
         <div className="mt-8 md:mt-0 md:order-1">
           <p className="text-center text-base text-gray-400">
-            &copy; 2022 RSVP-Web3
+            &copy; 2023 RSVP-Web3
           </p>
         </div>
       </div>

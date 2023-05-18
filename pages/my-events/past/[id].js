@@ -21,6 +21,77 @@ function PastEvent() {
     setMounted(true);
   }, []);
 
+  const confirmAttendee = async (attendee) => {
+    try {
+      const rsvpContract = connectContract();
+  
+      if (rsvpContract) {
+        const txn = await rsvpContract.confirmAttendee(event.id, attendee);
+        setLoading(true);
+        console.log("Minting...", txn.hash);
+  
+        await txn.wait();
+        console.log("Minted -- ", txn.hash);
+        setSuccess(true);
+        setLoading(false);
+        setMessage("Attendance has been confirmed.");
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+      setSuccess(false);
+      // setMessage(
+      //   `Error: ${process.env.NEXT_PUBLIC_TESTNET_EXPLORER_URL}tx/${txn.hash}`
+      // );
+      setMessage("Error!");
+      setLoading(false);
+      console.log(error);
+    }
+  };
+  
+  const confirmAllAttendees = async () => {
+    console.log("confirmAllAttendees");
+    try {
+      const rsvpContract = connectContract();
+  
+      if (rsvpContract) {
+        console.log("contract exists");
+        const txn = await rsvpContract.confirmAllAttendees(event.id, {
+          gasLimit: 300000,
+        });
+        console.log("await txn");
+        setLoading(true);
+        console.log("Mining...", txn.hash);
+  
+        await txn.wait();
+        console.log("Mined -- ", txn.hash);
+        setSuccess(true);
+        setLoading(false);
+        setMessage("All attendees confirmed successfully.");
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+      setSuccess(false);
+      // setMessage(
+      //   `Error: ${process.env.NEXT_PUBLIC_TESTNET_EXPLORER_URL}tx/${txn.hash}`
+      // );
+      setMessage("Error!");
+      setLoading(false);
+      console.log(error);
+    }
+  };
+  
+  function checkIfConfirmed(event, address) {
+    for (let i = 0; i < event.confirmedAttendees.length; i++) {
+      let confirmedAddress = event.confirmedAttendees[i].attendee.id;
+      if (confirmedAddress.toLowerCase() == address.toLowerCase()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   return (
     mounted && (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -179,75 +250,4 @@ export async function getServerSideProps(context) {
       event: data.event,
     },
   };
-}
-
-const confirmAttendee = async (attendee) => {
-  try {
-    const rsvpContract = connectContract();
-
-    if (rsvpContract) {
-      const txn = await rsvpContract.confirmAttendee(event.id, attendee);
-      setLoading(true);
-      console.log("Minting...", txn.hash);
-
-      await txn.wait();
-      console.log("Minted -- ", txn.hash);
-      setSuccess(true);
-      setLoading(false);
-      setMessage("Attendance has been confirmed.");
-    } else {
-      console.log("Ethereum object doesn't exist!");
-    }
-  } catch (error) {
-    setSuccess(false);
-    // setMessage(
-    //   `Error: ${process.env.NEXT_PUBLIC_TESTNET_EXPLORER_URL}tx/${txn.hash}`
-    // );
-    setMessage("Error!");
-    setLoading(false);
-    console.log(error);
-  }
-};
-
-const confirmAllAttendees = async () => {
-  console.log("confirmAllAttendees");
-  try {
-    const rsvpContract = connectContract();
-
-    if (rsvpContract) {
-      console.log("contract exists");
-      const txn = await rsvpContract.confirmAllAttendees(event.id, {
-        gasLimit: 300000,
-      });
-      console.log("await txn");
-      setLoading(true);
-      console.log("Mining...", txn.hash);
-
-      await txn.wait();
-      console.log("Mined -- ", txn.hash);
-      setSuccess(true);
-      setLoading(false);
-      setMessage("All attendees confirmed successfully.");
-    } else {
-      console.log("Ethereum object doesn't exist!");
-    }
-  } catch (error) {
-    setSuccess(false);
-    // setMessage(
-    //   `Error: ${process.env.NEXT_PUBLIC_TESTNET_EXPLORER_URL}tx/${txn.hash}`
-    // );
-    setMessage("Error!");
-    setLoading(false);
-    console.log(error);
-  }
-};
-
-function checkIfConfirmed(event, address) {
-  for (let i = 0; i < event.confirmedAttendees.length; i++) {
-    let confirmedAddress = event.confirmedAttendees[i].attendee.id;
-    if (confirmedAddress.toLowerCase() == address.toLowerCase()) {
-      return true;
-    }
-  }
-  return false;
 }

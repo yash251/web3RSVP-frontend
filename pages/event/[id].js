@@ -18,20 +18,63 @@ import {
   LinkIcon
 } from "@heroicons/react/outline";
 
-function Event({event}) {
+function Event({ event }) {
   const { data: account } = useAccount();
   const [success, setSuccess] = useState(null);
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(null);
   const [currentTimestamp, setEventTimestamp] = useState(new Date().getTime());
   console.log("EVENT:", event);
+
+  const newRSVP = async () => {
+    try {
+      const rsvpContract = connectContract();
+      
+      if (rsvpContract) {
+        const txn = await rsvpContract.createNewRSVP(event.id, {
+          value: event.deposit,
+          gasLimit: 300000,
+        });
+        setLoading(true);
+        console.log("Minting...", txn.hash);
+  
+        await txn.wait();
+        console.log("Minted -- ", txn.hash);
+        setSuccess(true);
+        setLoading(false);
+        setMessage("Your RSVP has been created successfully.");
+      } else {
+        console.log("Error getting contract.");
+      }
+    } catch (error) {
+      setSuccess(false);
+      setMessage("Error!");
+      setLoading(false);
+      console.log(error);
+    }
+  };
+
+  function checkIfAlreadyRSVPed() {
+    if (account) {
+      for (let i = 0; i < event.rsvps.length; i++) {
+        const thisAccount = account.address.toLowerCase();
+        if (event.rsvps[i].attendee.id.toLowerCase() == thisAccount) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
       <Head>
         <title> {event.name} | RSVP-Web3</title>
         <meta name="description" content={event.name} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      
       <section className="relative py-12">
       {loading && (
         <Alert
@@ -59,7 +102,7 @@ function Event({event}) {
       )}
       <h6 className="mb-2">{formatTimestamp(event.eventTimestamp)}</h6>
         <h1 className="text-3xl tracking-tight font-extrabold text-gray-900 sm:text-4xl md:text-5xl mb-6 lg:mb-12">
-          name
+          {event.name}
         </h1>
         <div className="flex flex-wrap-reverse lg:flex-nowrap">
           <div className="w-full pr-0 lg:pr-24 xl:pr-32">
@@ -108,7 +151,7 @@ function Event({event}) {
             <div className="flex item-center">
               <UsersIcon className="w-6 mr-2" />
               <span className="truncate">
-              {event.totalRSVPs}/{event.maxCapacity} attending
+                {event.totalRSVPs}/{event.maxCapacity} attending
               </span>
             </div>
             <div className="flex item-center">
@@ -118,7 +161,7 @@ function Event({event}) {
             <div className="flex items-center">
               <EmojiHappyIcon className="w-10 mr-2" />
               <span className="truncate">
-                Hosted by{" "}
+                Hosted by {event.eventOwner}
                 <a
                   className="text-indigo-800 truncate hover:underline"
                   href={`${process.env.NEXT_PUBLIC_TESTNET_EXPLORER_URL}address/${event.eventOwner}`}
@@ -138,6 +181,7 @@ function Event({event}) {
 
 export default Event;
 
+// function to fetch data from our subgraph from the server
 export async function getServerSideProps(context) {
   const { id } = context.params;
 
@@ -177,42 +221,3 @@ export async function getServerSideProps(context) {
     },
   };
 }
-
-function checkIfAlreadyRSVPed() {
-  if (account) {
-    for (let i = 0; i < event.rsvps.length; i++) {
-      const thisAccount = account.address.toLowerCase();
-      if (event.rsvps[i].attendee.id.toLowerCase() == thisAccount) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-const newRSVP = async () => {
-  try {
-    const rsvpContract = connectContract();
-    if (rsvpContract) {
-      const txn = await rsvpContract.createNewRSVP(event.id, {
-        value: event.deposit,
-        gasLimit: 300000,
-      });
-      setLoading(true);
-      console.log("Minting...", txn.hash);
-
-      await txn.wait();
-      console.log("Minted -- ", txn.hash);
-      setSuccess(true);
-      setLoading(false);
-      setMessage("Your RSVP has been created successfully.");
-    } else {
-      console.log("Error getting contract.");
-    }
-  } catch (error) {
-    setSuccess(false);
-    setMessage("Error!");
-    setLoading(false);
-    console.log(error);
-  }
-};
